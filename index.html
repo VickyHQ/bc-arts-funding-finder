@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Search and track arts funding opportunities for artists and arts organizations in British Columbia.">
+  <link rel="alternate" type="application/rss+xml" title="BC Arts Grants Weekly Updates" href="/grants.xml">
+  <title>BC Arts Funding Finder</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #5a6861;
+      --paper: #f6f7f3;
+      --card: #ffffff;
+      --line: #d8ded9;
+      --forest: #164c3b;
+      --forest-2: #0d392c;
+      --lime: #d7f06b;
+      --blue: #dceef2;
+      --amber: #fff0c7;
+      --red: #8b2d2d;
+      --shadow: 0 12px 35px rgba(25, 45, 36, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px clamp(18px, 4vw, 54px);
+      color: white;
+      background: rgba(13, 57, 44, .97);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(12px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.02em; }
+    .mark { width: 34px; height: 34px; display: grid; place-items: center; color: var(--forest-2); background: var(--lime); border-radius: 50% 50% 50% 12px; }
+    .top-actions { display: flex; gap: 8px; }
+    .ghost-btn, .primary-btn, .chip, .icon-btn {
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .ghost-btn:hover, .primary-btn:hover, .icon-btn:hover { transform: translateY(-1px); }
+    .ghost-btn { padding: 9px 13px; color: white; background: rgba(255,255,255,.1); }
+    .subscribe-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 14px;
+      color: var(--forest-2);
+      background: var(--lime);
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: transform .16s ease, background .16s ease;
+    }
+    .subscribe-btn:hover { transform: translateY(-1px); background: #e3f68b; }
+    .hero {
+      padding: 38px clamp(18px, 4vw, 54px) 26px;
+      background: var(--forest);
+      color: white;
+      overflow: hidden;
+    }
+    .hero-grid { max-width: 1380px; margin: 0 auto; display: grid; grid-template-columns: 1.45fr .55fr; align-items: end; gap: 36px; }
+    .eyebrow { margin: 0 0 8px; color: var(--lime); font-weight: 800; font-size: .82rem; text-transform: uppercase; letter-spacing: .14em; }
+    h1 { max-width: 780px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 5vw, 4.8rem); line-height: .98; letter-spacing: -.045em; }
+    .intro { max-width: 690px; margin: 18px 0 0; color: #dce9e3; font-size: 1.04rem; }
+    .hero-stat { padding: 18px 20px; color: var(--forest-2); background: var(--lime); border-radius: 18px 18px 4px 18px; }
+    .hero-stat strong { display: block; font-family: Georgia, serif; font-size: 2.5rem; line-height: 1; }
+    .hero-stat span { display: block; margin-top: 8px; font-weight: 700; }
+    main { max-width: 1480px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 42px) 64px; }
+    .workspace { display: grid; grid-template-columns: 265px minmax(0, 1fr); gap: 22px; align-items: start; }
+    .filters {
+      position: sticky;
+      top: 84px;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .filters h2, .results h2 { margin: 0; font-size: 1.05rem; }
+    .field { display: grid; gap: 7px; margin-top: 17px; }
+    label { font-size: .86rem; font-weight: 760; color: #34443d; }
+    input, select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 11px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #bdc8c1;
+      border-radius: 9px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--forest); box-shadow: 0 0 0 3px rgba(22,76,59,.13); }
+    .check-row { display: flex; align-items: center; gap: 10px; margin-top: 17px; }
+    .check-row input { width: 18px; min-height: 18px; accent-color: var(--forest); }
+    .check-row label { cursor: pointer; }
+    .clear-btn { width: 100%; margin-top: 18px; padding: 10px 12px; color: var(--forest); background: #eef3ef; border: 0; border-radius: 9px; cursor: pointer; font-weight: 700; }
+    .alert-box { margin-top: 18px; padding: 16px; color: white; background: var(--forest); border-radius: 12px; }
+    .alert-box strong { display: block; font-family: Georgia, serif; font-size: 1.08rem; }
+    .alert-box p { margin: 6px 0 13px; color: #dce9e3; font-size: .86rem; }
+    .alert-box .subscribe-btn { width: 100%; }
+    .results-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 2px 0 15px; }
+    .result-count { margin: 5px 0 0; color: var(--muted); font-size: .9rem; }
+    .sort { width: 190px; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 295px;
+      padding: 21px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      box-shadow: 0 8px 24px rgba(25,45,36,.045);
+    }
+    .card.open { border-top: 4px solid var(--forest); padding-top: 18px; }
+    .card.closed { opacity: .78; }
+    .card-top { display: flex; justify-content: space-between; gap: 12px; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .02em; background: var(--blue); }
+    .status-open { color: #14553d; background: #dff5e7; }
+    .status-upcoming { color: #174f75; background: #dceefb; }
+    .status-ongoing { color: #62500c; background: var(--amber); }
+    .status-closed { color: #6b5555; background: #eee8e8; }
+    .icon-btn { flex: 0 0 auto; width: 38px; height: 38px; color: #435048; background: #f1f4f1; font-size: 1.15rem; }
+    .icon-btn.saved { color: white; background: var(--forest); }
+    .card h3 { margin: 15px 0 6px; font-family: Georgia, serif; font-size: 1.32rem; line-height: 1.16; }
+    .funder { margin: 0; color: var(--muted); font-weight: 650; font-size: .88rem; }
+    .desc { margin: 14px 0; color: #3f4d46; font-size: .92rem; }
+    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-top: 12px; border-top: 1px solid #e7ebe8; }
+    .meta small { display: block; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; }
+    .meta strong { display: block; margin-top: 2px; font-size: .88rem; }
+    .card-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .primary-btn { flex: 1; padding: 10px 13px; color: white; background: var(--forest); text-decoration: none; text-align: center; font-weight: 760; }
+    .details-btn { padding: 10px 13px; color: var(--forest); background: #eef3ef; border: 0; border-radius: 10px; cursor: pointer; font-weight: 760; }
+    .empty { display: none; padding: 52px 24px; text-align: center; background: white; border: 1px dashed #b9c5bd; border-radius: 16px; color: var(--muted); }
+    dialog { width: min(620px, calc(100% - 30px)); padding: 0; border: 0; border-radius: 18px; box-shadow: 0 30px 100px rgba(0,0,0,.26); }
+    dialog::backdrop { background: rgba(8,27,21,.64); backdrop-filter: blur(3px); }
+    .dialog-inner { padding: 25px; }
+    .dialog-head { display: flex; justify-content: space-between; gap: 20px; }
+    .dialog-head h2 { margin: 0; font-family: Georgia, serif; font-size: 1.65rem; }
+    .close { width: 36px; height: 36px; border: 0; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    .detail-box { padding: 13px; background: #f2f5f2; border-radius: 10px; }
+    .detail-box small { color: var(--muted); }
+    .source-note { margin: 26px 0 0; padding: 15px 17px; color: #4d5a54; background: #edf2ef; border-radius: 12px; font-size: .85rem; }
+    .footer { padding: 30px 20px 44px; color: #627169; text-align: center; font-size: .83rem; }
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-stat { max-width: 270px; }
+      .workspace { grid-template-columns: 1fr; }
+      .filters { position: static; }
+    }
+    @media (max-width: 650px) {
+      .topbar { padding: 13px 16px; }
+      .brand span:last-child { display: none; }
+      .hero { padding-top: 28px; }
+      .cards { grid-template-columns: 1fr; }
+      .results-head { align-items: start; flex-direction: column; }
+      .sort { width: 100%; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark" aria-hidden="true">A</span><span>BC Arts Funding Finder</span></div>
+    <div class="top-actions">
+      <a class="subscribe-btn" href="https://128bda1b.sibforms.com/serve/MUIFAOodqYUkpgdd8EBw2gfmlDd9sn21eoK_OEhrHz0M6vfKUc3dgSCv6Qxck5OBrKpUi5GxR51sGOezSDINUQ0XwKmBGJxm0OzTxxF5S0GLsu5zzCNo-66IOmC3bCoLgjyaQ1hmm3c_h9a180X9ck6utJMZQclFyOyywsFlSOHn5063_NL6P8tYk0VfhZFsxVqpqbn2GkpHVGkqWQ==" target="_blank" rel="noopener">Weekly email alerts ↗</a>
+      <button class="ghost-btn" id="savedButton">Saved <span id="savedCount">0</span></button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Funding across British Columbia</p>
+        <h1>Find the next stage for your art.</h1>
+        <p class="intro">A practical directory for arts grants, arts-eligible community funding, microgrants and regional opportunities. Search verified programs, compare eligibility and keep a shortlist on this device.</p>
+      </div>
+      <div class="hero-stat"><strong id="openStat">0</strong><span>open or ongoing opportunities</span></div>
+    </div>
+  </section>
+
+  <main>
+    <div class="workspace">
+      <aside class="filters" aria-label="Funding filters">
+        <h2>Filter opportunities</h2>
+        <div class="field">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Try theatre, touring, Vancouver…">
+        </div>
+        <div class="field">
+          <label for="discipline">Discipline</label>
+          <select id="discipline"><option value="all">All disciplines</option></select>
+        </div>
+        <div class="field">
+          <label for="fundingType">Funding type</label>
+          <select id="fundingType"><option value="all">All funding types</option></select>
+        </div>
+        <div class="field">
+          <label for="applicant">Applicant</label>
+          <select id="applicant"><option value="all">All applicant types</option></select>
+        </div>
+        <div class="field">
+          <label for="amountBand">Maximum grant amount</label>
+          <select id="amountBand">
+            <option value="all">All amounts</option>
+            <option value="under-1000">Under $1,000</option>
+            <option value="1000-5000">$1,000–$5,000</option>
+            <option value="over-5000">Over $5,000</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="region">Eligible region</label>
+          <select id="region"><option value="all">All regions</option></select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status">
+            <option value="active">Open + ongoing</option>
+            <option value="all">All statuses</option>
+            <option value="open">Open now</option>
+            <option value="upcoming">Opening soon</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="closed">Closed / next intake</option>
+          </select>
+        </div>
+        <div class="check-row"><input id="savedOnly" type="checkbox"><label for="savedOnly">Show saved only</label></div>
+        <button class="clear-btn" id="clearFilters">Clear filters</button>
+        <div class="alert-box">
+          <strong>Get new grants weekly</strong>
+          <p>Subscribe for a weekly email with new and approaching BC funding opportunities.</p>
+          <a class="subscribe-btn" href="https://128bda1b.sibforms.com/serve/MUIFAOodqYUkpgdd8EBw2gfmlDd9sn21eoK_OEhrHz0M6vfKUc3dgSCv6Qxck5OBrKpUi5GxR51sGOezSDINUQ0XwKmBGJxm0OzTxxF5S0GLsu5zzCNo-66IOmC3bCoLgjyaQ1hmm3c_h9a180X9ck6utJMZQclFyOyywsFlSOHn5063_NL6P8tYk0VfhZFsxVqpqbn2GkpHVGkqWQ==" target="_blank" rel="noopener">Subscribe free ↗</a>
+        </div>
+      </aside>
+
+      <section class="results" aria-live="polite">
+        <div class="results-head">
+          <div><h2>BC funding opportunities</h2><p class="result-count" id="resultCount"></p></div>
+          <select class="sort" id="sort" aria-label="Sort opportunities">
+            <option value="deadline">Deadline: soonest</option>
+            <option value="title">Name: A–Z</option>
+            <option value="funder">Funder: A–Z</option>
+          </select>
+        </div>
+        <div class="cards" id="cards"></div>
+        <div class="empty" id="empty"><strong>No matching opportunities.</strong><br>Try widening your filters or clearing the search.</div>
+        <p class="source-note"><strong>Before you apply:</strong> Program details can change. Always confirm the current deadline, eligibility and guidelines on the funder’s official website. Each listing links to an official source. Directory last reviewed September 9, 2026.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">Independent planning directory · Official application links are provided for verification · <a href="/grants.xml">RSS feed</a></footer>
+
+  <dialog id="detailsDialog"><div class="dialog-inner" id="dialogContent"></div></dialog>
+
+  <script>
+    const grants = [
+      {
+        id: 'bcac-professional-development', title: 'Professional Development', funder: 'BC Arts Council',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Individuals'], region: 'British Columbia',
+        status: 'open', deadline: '2026-09-23', amount: 'Varies',
+        description: 'Supports professional artists and arts and culture professionals undertaking specific learning activities to advance their practice or career.',
+        fit: 'Professional artists and cultural workers based in B.C.', url: 'https://www.bcartscouncil.ca/program/professional-development-3/'
+      },
+      {
+        id: 'bcac-touring-individuals', title: 'Arts Circulation and Touring — Individuals', funder: 'BC Arts Council',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Individuals'], region: 'British Columbia',
+        status: 'open', deadline: '2026-09-23', amount: 'Varies',
+        description: 'Helps B.C. artists circulate or tour work within the province, elsewhere in Canada or internationally.',
+        fit: 'Individual professional artists planning eligible touring or circulation activity.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-touring-orgs', title: 'Arts Circulation and Touring — Organizations & Collectives', funder: 'BC Arts Council',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Organizations','Collectives'], region: 'British Columbia',
+        status: 'open', deadline: '2026-09-23', amount: 'Varies',
+        description: 'Supports circulation and touring that expands opportunities and exposure for B.C. artists and arts organizations.',
+        fit: 'Eligible B.C. arts organizations and collectives.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'creativebc-live-music', title: 'Live Music', funder: 'Creative BC / Amplify BC',
+        disciplines: ['Music'], applicants: ['Organizations','Businesses'], region: 'British Columbia',
+        status: 'open', deadline: '2026-10-07', amount: 'Varies by stream',
+        description: 'Supports B.C.-based live music events that create engagement opportunities for audiences and artists.',
+        fit: 'B.C.-based live music presenters and eligible music businesses.', url: 'https://creativebc.com/funding-program/music-sound-recording/live-music/'
+      },
+      {
+        id: 'vancouver-casc', title: 'CASC Cultural Project Grants', funder: 'City of Vancouver',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Organizations'], region: 'Vancouver',
+        status: 'open', deadline: '2026-10-07', amount: 'Up to $15,000',
+        description: 'Funds arts and cultural activities, projects and events taking place in Vancouver. A second 2027 intake is scheduled for March 3, 2027.',
+        fit: 'Non-profit arts and cultural organizations delivering activity in Vancouver.', url: 'https://vancouver.ca/people-programs/cultural-grants-program.aspx'
+      },
+      {
+        id: 'bcac-performing-operating', title: 'Operating Assistance: Performing Arts Organizations', funder: 'BC Arts Council',
+        disciplines: ['Theatre','Music','Dance'], applicants: ['Organizations'], region: 'British Columbia',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports established non-profit organizations working in professional dance, music, theatre, comedy, circus or multidisciplinary performing arts.',
+        fit: 'Established B.C. non-profit performing arts organizations with an annual artistic program.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-festivals-operating', title: 'Operating Assistance: Professional Arts Festivals', funder: 'BC Arts Council',
+        disciplines: ['Festivals','Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Organizations'], region: 'British Columbia',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Assists organizations that produce a major recurring public arts festival with professional artists and stable management.',
+        fit: 'Established B.C. professional arts festival organizations.', url: 'https://www.bcartscouncil.ca/program/operating-assistance-arts-festivals/'
+      },
+      {
+        id: 'canada-council-public-outreach', title: 'Public Outreach', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada',
+        status: 'open', deadline: '2026-10-14', amount: 'Varies',
+        description: 'Supports activities that connect artists with diverse audiences and build public appreciation and enjoyment of the arts.',
+        fit: 'Eligible Canadian artists, groups and arts organizations, including those in B.C.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'canada-council-residencies', title: 'International Residencies', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada',
+        status: 'open', deadline: '2026-10-21', amount: 'Varies',
+        description: 'Supports Canadian artists and arts organizations attending eligible residencies abroad.',
+        fit: 'Artists, arts workers, groups and organizations planning an international residency.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'creativebc-record-in-bc', title: 'Record in BC', funder: 'Creative BC / Amplify BC',
+        disciplines: ['Music'], applicants: ['Individuals','Businesses'], region: 'British Columbia',
+        status: 'open', deadline: '2026-10-30', amount: 'Varies',
+        description: 'A music and sound recording opportunity listed by Creative BC for the 2026–27 funding cycle.',
+        fit: 'Eligible B.C. artists and music companies undertaking recording activity in B.C.', url: 'https://creativebc.com/funding-programs/'
+      },
+      {
+        id: 'canada-council-coproductions', title: 'International Co-productions', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Organizations','Collectives'], region: 'Canada',
+        status: 'open', deadline: '2026-11-04', amount: 'Varies',
+        description: 'Development support for new works or exhibitions created with an international arts organization.',
+        fit: 'Eligible Canadian artistic groups and organizations with a foreign arts partner.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'canada-council-artistic-creation', title: 'Artistic Creation', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada',
+        status: 'ongoing', deadline: null, amount: 'Varies',
+        description: 'Supports artistic work from initial idea through creation, production and public presentation.',
+        fit: 'Eligible Canadian artists, groups and arts organizations; apply before the project or activity starts.', url: 'https://canadacouncil.ca/funding/grants/explore-and-create'
+      },
+      {
+        id: 'canada-council-microgrants', title: 'Arts Across Canada and Abroad: Micro-grants', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada',
+        status: 'ongoing', deadline: null, amount: 'Micro-grant',
+        description: 'Supports activities that advance the professional growth and artistic careers or practices of artists and arts organizations.',
+        fit: 'Eligible Canadian applicants; apply before the project, activity or departure date.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'vancouver-critical-assistance', title: 'Critical Assistance Capital Grants', funder: 'City of Vancouver',
+        disciplines: ['Cultural Spaces'], applicants: ['Organizations'], region: 'Vancouver',
+        status: 'ongoing', deadline: null, amount: 'Up to $25,000',
+        description: 'Supports urgent life-safety upgrades and other critical, time-sensitive needs for Vancouver cultural spaces while funds remain available.',
+        fit: 'Eligible Vancouver-based arts and culture non-profits responsible for a cultural space.', url: 'https://vancouver.ca/people-programs/cultural-spaces-grant-program.aspx'
+      },
+      {
+        id: 'bc-gaming-arts', title: 'Community Gaming Grants — Arts & Culture', funder: 'Province of British Columbia',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Organizations'], region: 'British Columbia',
+        status: 'closed', deadline: '2026-04-30', amount: 'Program grant',
+        description: 'Annual program grants for eligible non-profits providing public access to arts, culture or heritage. Track the official page for the next intake.',
+        fit: 'Eligible B.C. non-profit community organizations.', url: 'https://www2.gov.bc.ca/gov/content/sports-culture/gambling-fundraising/gaming-grants/community-gaming-grants'
+      }
+    ];
+
+    grants.push(
+      {
+        id: 'bcac-creative-writers', title: 'Individual Arts Grants: Creative Writers', funder: 'BC Arts Council',
+        disciplines: ['Literary'], applicants: ['Individuals'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-07', amount: 'Project grant',
+        description: 'Supports professional writers with specific creative writing projects.',
+        fit: 'Professional B.C. writers; new applicants must register before the pre-deadline processing pause.', url: 'https://www.bcartscouncil.ca/program/creative-writers/'
+      },
+      {
+        id: 'bcac-operating-literary', title: 'Operating Assistance: Literary Arts', funder: 'BC Arts Council',
+        disciplines: ['Literary','Publishing'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports organizations with sustained literary, editorial or publishing programs.',
+        fit: 'Established B.C. literary arts organizations with ongoing public programming.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-professional-training', title: 'Operating Assistance: Professional Arts Training Organizations', funder: 'BC Arts Council',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports organizations providing comprehensive specialized training for professional artists and cultural workers.',
+        fit: 'Established B.C. non-profit professional arts training organizations.', url: 'https://www.bcartscouncil.ca/program/operating-assistance-professional-arts-training/'
+      },
+      {
+        id: 'bcac-service-organizations', title: 'Operating Assistance: Arts & Cultural Service Organizations', funder: 'BC Arts Council',
+        disciplines: ['Community Arts','Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports service organizations providing resources and services to an established arts and culture membership.',
+        fit: 'B.C. arts and cultural service organizations with an established membership base.', url: 'https://www.bcartscouncil.ca/program/operating-assistance-arts-culture-service-organizations/'
+      },
+      {
+        id: 'bcac-book-publishers', title: 'Operating Assistance: Book Publishers', funder: 'BC Arts Council',
+        disciplines: ['Literary','Publishing'], applicants: ['Organizations','Businesses'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports eligible B.C. book publishers developing and promoting Canadian writers and culturally significant work.',
+        fit: 'Established eligible book publishers based in B.C.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-community-operating', title: 'Operating Assistance: Community Arts Organizations', funder: 'BC Arts Council',
+        disciplines: ['Community Arts'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports organizations that provide public access to arts and culture and develop community cultural leadership.',
+        fit: 'Established B.C. community arts councils and cultural organizations.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-museums-operating', title: 'Operating Assistance: Museums & Indigenous Cultural Centres', funder: 'BC Arts Council',
+        disciplines: ['Museums','Indigenous Arts','Cultural Heritage'], applicants: ['Organizations'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports annual public, curatorial and collections programs of eligible museums and Indigenous cultural centres.',
+        fit: 'Public museums and Indigenous cultural centres in B.C. with sustained annual programming.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-visual-media-operating', title: 'Operating Assistance: Visual & Media Arts Organizations', funder: 'BC Arts Council',
+        disciplines: ['Visual Arts','Media Arts'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Operating support',
+        description: 'Supports sustained public, artistic and curatorial programs in visual and media arts.',
+        fit: 'Established B.C. non-profit visual or media arts organizations.', url: 'https://www.bcartscouncil.ca/program/operating-assistance-visual-media-arts/'
+      },
+      {
+        id: 'bcac-accelerate', title: 'Accelerate Program', funder: 'BC Arts Council',
+        disciplines: ['Community Arts','Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Organizations','Collectives'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-08', amount: 'Two-year initiative',
+        description: 'A two-year initiative designed to improve access and reduce funding barriers for equity-deserving and regional groups.',
+        fit: 'Eligible equity-deserving and regional B.C. arts organizations and collectives.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-community-project', title: 'Project Assistance: Community Arts Organizations', funder: 'BC Arts Council',
+        disciplines: ['Community Arts'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-14', amount: 'Project grant',
+        description: 'Supports a specific project or production activity by community arts councils and cultural organizations.',
+        fit: 'Eligible B.C. community arts councils and cultural organizations.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-media-project', title: 'Project Assistance: Media Arts Organizations', funder: 'BC Arts Council',
+        disciplines: ['Media Arts'], applicants: ['Organizations','Collectives'], region: 'British Columbia', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-14', amount: 'Project grant',
+        description: 'Supports independent media arts works, programming and community engagement outside commercial film, video and gaming.',
+        fit: 'Eligible B.C. media arts organizations and independent arts or curatorial collectives.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'bcac-museums-project', title: 'Project Assistance: Museums & Indigenous Cultural Centres', funder: 'BC Arts Council',
+        disciplines: ['Museums','Indigenous Arts','Cultural Heritage'], applicants: ['Organizations'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'open', deadline: '2026-10-14', amount: 'Project grant',
+        description: 'Project support for eligible museums and Indigenous cultural centres in British Columbia.',
+        fit: 'Eligible B.C. museums and Indigenous cultural centres undertaking a defined project.', url: 'https://www.bcartscouncil.ca/program/'
+      },
+      {
+        id: 'cca-circulation-touring', title: 'Circulation and Touring', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-07', amount: 'Varies',
+        description: 'Supports circulation and touring of artists, exhibitions and artistic works in Canada and abroad.',
+        fit: 'Eligible Canadian artists, groups and organizations, including B.C. applicants.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'cca-foreign-artist-tours', title: 'Foreign Artist Tours', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Organizations','Collectives'], region: 'Canada', type: 'Arts-specific',
+        status: 'open', deadline: '2026-11-04', amount: 'Varies',
+        description: 'Supports Canadian presenters bringing artists or exhibitions from abroad to Canadian audiences.',
+        fit: 'Eligible Canadian groups and arts organizations planning a tour by foreign artists.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'cca-composite-activities', title: 'Composite Activities', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada', type: 'Arts-specific',
+        status: 'open', deadline: '2026-11-25', amount: 'Multi-year support',
+        description: 'Supports multiple, large or complex artistic projects and activities for a period of up to three years.',
+        fit: 'Eligible Canadian artists, cultural workers, groups and organizations with a multi-activity plan.', url: 'https://canadacouncil.ca/funding/grants/supporting-artistic-practice'
+      },
+      {
+        id: 'cca-representation-promotion', title: 'Representation and Promotion', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada', type: 'Arts-specific',
+        status: 'ongoing', deadline: null, amount: 'Varies',
+        description: 'Supports travel linked to promotion and market development for Canadian artists and artistic work.',
+        fit: 'Eligible Canadian applicants; apply before the departure date.', url: 'https://canadacouncil.ca/funding/grants/arts-across-canada-and-abroad'
+      },
+      {
+        id: 'cca-small-scale', title: 'Small-Scale Activities', funder: 'Canada Council for the Arts',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Individuals','Organizations','Collectives'], region: 'Canada', type: 'Microgrant',
+        status: 'ongoing', deadline: null, amount: 'Small-scale grant',
+        description: 'Supports eligible small-scale artistic activities with applications accepted before the activity begins.',
+        fit: 'Eligible Canadian artists, groups and organizations seeking support for a modest activity.', url: 'https://canadacouncil.ca/funding/grants/deadlines'
+      },
+      {
+        id: 'surrey-cultural-2027', title: '2027 Cultural Grants', funder: 'City of Surrey',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts','Cultural Heritage','Festivals'], applicants: ['Organizations'], region: 'Surrey', type: 'Regional & municipal',
+        status: 'open', deadline: '2026-10-05', amount: 'Varies by category',
+        description: 'Supports Surrey arts, culture and heritage through cultural celebration, project and operating grant categories.',
+        fit: 'Eligible Surrey not-for-profit arts, culture and heritage organizations.', url: 'https://www.surrey.ca/arts-culture/cultural-grants'
+      },
+      {
+        id: 'nanaimo-culture-project', title: '2027 Culture Project Grant', funder: 'City of Nanaimo',
+        disciplines: ['Community Arts','Cultural Heritage','Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Organizations'], region: 'Nanaimo', type: 'Regional & municipal',
+        status: 'open', deadline: '2026-10-06', amount: 'Project grant',
+        description: 'Supports culture and heritage projects that contribute to Nanaimo’s cultural, social and economic vitality.',
+        fit: 'Eligible Nanaimo-based non-profit culture and heritage organizations.', url: 'https://www.nanaimo.ca/your-government/grants/culture-project-grant'
+      },
+      {
+        id: 'nanaimo-culture-operating', title: '2027 Culture Operating Grant', funder: 'City of Nanaimo',
+        disciplines: ['Community Arts','Cultural Heritage','Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Organizations'], region: 'Nanaimo', type: 'Regional & municipal',
+        status: 'open', deadline: '2026-10-06', amount: 'Operating support',
+        description: 'Annual operating support for qualifying professional arts, culture and heritage non-profits in Nanaimo.',
+        fit: 'Nanaimo non-profit arts, culture or heritage organizations meeting operating-history requirements.', url: 'https://www.nanaimo.ca/your-government/grants/culture-operating-grant'
+      },
+      {
+        id: 'richmond-arts-culture', title: '2027 Arts and Culture Grant', funder: 'City of Richmond',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts','Literary'], applicants: ['Organizations'], region: 'Richmond', type: 'Regional & municipal',
+        status: 'upcoming', deadline: null, amount: 'Up to $10,000',
+        description: 'Operating and project assistance for Richmond-based non-profit arts organizations; the 2027 intake opens September 16, 2026.',
+        fit: 'Richmond-based non-profit arts organizations presenting public artistic activity.', url: 'https://www.richmond.ca/culture/citygrant/artsculturegrant.htm'
+      },
+      {
+        id: 'kelowna-equity-microgrant', title: 'Advancing Equity Micro Grant', funder: 'City of Kelowna',
+        disciplines: ['Community Arts','Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'Kelowna', type: 'Microgrant',
+        status: 'ongoing', deadline: null, amount: 'Up to $500',
+        description: 'Small-scale arts and culture funding for projects led by equity-seeking communities that face barriers to other supports.',
+        fit: 'Kelowna-area equity-seeking artists, collectives and community groups; confirm intake availability before applying.', url: 'https://www.kelowna.ca/city-hall/city-funding/grants'
+      },
+      {
+        id: 'kelowna-organizational-development', title: 'Organizational Development Grant', funder: 'City of Kelowna',
+        disciplines: ['Community Arts','Theatre','Music','Dance','Visual Arts','Media Arts','Cultural Heritage'], applicants: ['Organizations'], region: 'Kelowna', type: 'Regional & municipal',
+        status: 'ongoing', deadline: null, amount: 'Up to $5,000',
+        description: 'Supports consulting, training or tuition costs that strengthen the capacity of eligible arts, culture and heritage organizations.',
+        fit: 'Eligible Kelowna-based non-profit arts, culture and heritage organizations; confirm current intake timing on the official page.', url: 'https://www.kelowna.ca/our-community/arts-culture-heritage/non-profit-hub/cultural-grants'
+      },
+      {
+        id: 'victoria-neighbourhood', title: 'My Great Neighbourhood Grants', funder: 'City of Victoria',
+        disciplines: ['Community Arts','Public Art'], applicants: ['Individuals','Organizations','Collectives'], region: 'Victoria', type: 'Arts-eligible community',
+        status: 'open', deadline: null, amount: 'Up to $8,000',
+        description: 'Supports resident-led community projects, including murals, placemaking and creative neighbourhood activities.',
+        fit: 'Victoria residents and community groups with neighbourhood-building ideas.', url: 'https://www.victoria.ca/city-government/city-grants/my-great-neighbourhood-grants'
+      },
+      {
+        id: 'vancouver-neighbourhood-small', title: 'Neighbourhood Small Grants', funder: 'Vancouver Foundation',
+        disciplines: ['Community Arts','Theatre','Music','Dance','Visual Arts','Cultural Heritage'], applicants: ['Individuals'], region: 'British Columbia', type: 'Microgrant',
+        status: 'ongoing', deadline: null, amount: '$50–$500',
+        description: 'Funds resident-led ideas that connect and engage neighbours; local availability and deadlines vary across B.C.',
+        fit: 'Individuals proposing a small, inclusive neighbourhood project, including arts and cultural activities.', url: 'https://www.vancouverfoundation.ca/grant-seekers/find-grants/neighbourhood-small-grants/'
+      },
+      {
+        id: 'vancouver-par', title: 'Participatory Action Research — Convene Grants', funder: 'Vancouver Foundation',
+        disciplines: ['Community Arts','Research'], applicants: ['Organizations','Collectives'], region: 'British Columbia', type: 'Arts-eligible community',
+        status: 'upcoming', deadline: null, amount: 'Up to $25,000',
+        description: 'Short-term grants for teams to understand a health issue and develop a viable participatory research plan; 2026 intake opens September 14.',
+        fit: 'B.C. research partnerships, including arts-based teams addressing a clearly defined health issue.', url: 'https://www.vancouverfoundation.ca/grant-seekers/find-grants/participatory-action-research-grants/'
+      },
+      {
+        id: 'vancouver-transforming-systems', title: 'Transforming Systems Grants', funder: 'Vancouver Foundation',
+        disciplines: ['Community Arts','Community Development'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-eligible community',
+        status: 'closed', deadline: null, amount: 'Up to $100,000/year',
+        description: 'Flexible support for organizations addressing root causes of inequality; 2026 Stage 1 is closed and under review.',
+        fit: 'B.C. charities and non-profits, including arts organizations, undertaking credible systems-change work.', url: 'https://www.vancouverfoundation.ca/grant-seekers/find-grants/transforming-systems-grants/'
+      },
+      {
+        id: 'vancouver-level-bipoc', title: 'LEVEL BIPOC Grants', funder: 'Vancouver Foundation',
+        disciplines: ['Community Arts','Community Development'], applicants: ['Organizations'], region: 'British Columbia', type: 'Arts-eligible community',
+        status: 'closed', deadline: '2026-02-09', amount: '$150,000 over 3 years',
+        description: 'Flexible operating support for BIPOC-led and BIPOC youth-led or youth-engaging organizations in B.C.',
+        fit: 'Registered B.C. charities and non-profit societies led by or engaging BIPOC communities.', url: 'https://www.vancouverfoundation.ca/grant-seekers/find-grants/level-bipoc-grants/'
+      },
+      {
+        id: 'vancouver-thriving-indigenous', title: 'Thriving Indigenous Systems Fund', funder: 'Vancouver Foundation',
+        disciplines: ['Indigenous Arts','Community Development','Cultural Heritage'], applicants: ['Organizations'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'upcoming', deadline: null, amount: 'Up to $100,000/year for 3 years',
+        description: 'Flexible multi-year funding for Indigenous-led organizations serving land-based First Nations in B.C.; next cycle is planned for 2027.',
+        fit: 'Land-based First Nations and Indigenous-led organizations serving land-based First Nations in B.C.', url: 'https://www.vancouverfoundation.ca/grant-seekers/find-grants/thriving-indigenous-systems-fund-tisf/'
+      },
+      {
+        id: 'vancouver-climate-action', title: 'Community Climate Action Grant', funder: 'City of Vancouver',
+        disciplines: ['Community Arts','Community Development'], applicants: ['Organizations','Indigenous Governments'], region: 'Vancouver', type: 'Arts-eligible community',
+        status: 'open', deadline: '2026-10-01', amount: 'Up to $50,000',
+        description: 'Supports community-led climate action in Vancouver; creative public engagement and arts-based approaches may be eligible when aligned with program goals.',
+        fit: 'Eligible non-profits, charities and First Nations proposing community climate action in Vancouver.', url: 'https://vancouver.ca/people-programs/community-climate-action-grants.aspx'
+      },
+      {
+        id: 'vancouver-mural-support', title: 'Mural Support Program', funder: 'City of Vancouver',
+        disciplines: ['Public Art','Visual Arts','Community Arts'], applicants: ['Individuals','Organizations','Businesses'], region: 'Vancouver', type: 'Regional & municipal',
+        status: 'ongoing', deadline: null, amount: 'Support varies',
+        description: 'Provides guidance and potential support for outdoor mural projects involving artists, community groups, businesses or property owners.',
+        fit: 'Teams planning a legal outdoor mural on a Vancouver property.', url: 'https://vancouver.ca/parks-recreation-culture/make-an-outdoor-mural.aspx'
+      },
+      {
+        id: 'vancouver-capital-grants', title: 'Capital Grants — Cultural Facilities', funder: 'City of Vancouver',
+        disciplines: ['Cultural Spaces','Community Arts'], applicants: ['Organizations'], region: 'Vancouver', type: 'Regional & municipal',
+        status: 'ongoing', deadline: null, amount: 'Capital funding',
+        description: 'Year-round capital funding, subject to available funds, for eligible non-profit facilities and infrastructure projects.',
+        fit: 'Eligible Vancouver non-profits responsible for cultural or community facilities.', url: 'https://vancouver.ca/people-programs/capital-grants-program.aspx'
+      },
+      {
+        id: 'fpcc-arts-vitality', title: 'Arts Vitality Grant', funder: 'First Peoples’ Cultural Council',
+        disciplines: ['Indigenous Arts','Theatre','Music','Dance','Visual Arts','Media Arts'], applicants: ['Individuals','Organizations','Collectives'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'closed', deadline: null, amount: 'Up to $10,000',
+        description: 'One-time support for creative projects contributing to B.C. First Nations arts; the current intake is closed.',
+        fit: 'Eligible B.C. First Nations artists, communities and First Nations-led organizations.', url: 'https://fpcc.ca/program/arts-vitality-grant/'
+      },
+      {
+        id: 'fpcc-arts-infrastructure', title: 'Arts Infrastructure Program', funder: 'First Peoples’ Cultural Council',
+        disciplines: ['Indigenous Arts','Cultural Spaces'], applicants: ['Organizations','Indigenous Governments'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'closed', deadline: null, amount: 'Up to $75,000',
+        description: 'Supports First Nations-led arts spaces, artistic production and organizational capacity; the 2026 intake is closed.',
+        fit: 'Eligible B.C. First Nations communities and First Nations-led organizations and societies.', url: 'https://fpcc.ca/program/arts-infrastructure-program/'
+      },
+      {
+        id: 'fpcc-braided-knowledge', title: 'Braided Knowledge Grant', funder: 'First Peoples’ Cultural Council',
+        disciplines: ['Indigenous Arts','Cultural Heritage','Language'], applicants: ['Organizations','Indigenous Governments'], region: 'British Columbia', type: 'Indigenous & cultural heritage',
+        status: 'closed', deadline: null, amount: 'Up to $25,000',
+        description: 'Supports projects connecting B.C. First Nations arts, languages, cultures and heritage; the current intake is closed.',
+        fit: 'Eligible B.C. First Nations communities and First Nations-led applicants.', url: 'https://fpcc.ca/program/braided-knowledge/'
+      },
+      {
+        id: 'ckca-arts-culture', title: 'Columbia Kootenay Cultural Alliance Grants', funder: 'Columbia Basin Trust / CKCA',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary','Cultural Heritage'], applicants: ['Individuals','Organizations'], region: 'Columbia Basin', type: 'Regional & municipal',
+        status: 'closed', deadline: '2026-03-06', amount: 'Varies by program',
+        description: 'Regional support for arts, culture and heritage projects and organizations across the Columbia Basin; 2026 intakes are closed.',
+        fit: 'Eligible artists and arts, culture or heritage organizations based in the Columbia Basin.', url: 'https://ourtrust.org/apply-now-for-arts-and-culture-grants-3/'
+      }
+    );
+
+    const typeById = {
+      'canada-council-microgrants': 'Microgrant',
+      'vancouver-critical-assistance': 'Regional & municipal',
+      'vancouver-casc': 'Regional & municipal',
+      'bc-gaming-arts': 'Arts-eligible community'
+    };
+    grants.forEach(g => {
+      g.type = g.type || typeById[g.id] || 'Arts-specific';
+      g.verified = '2026-09-09';
+    });
+
+    const state = { saved: new Set(JSON.parse(localStorage.getItem('bcArtsSaved') || '[]')) };
+    const els = Object.fromEntries(['search','discipline','fundingType','applicant','amountBand','region','status','savedOnly','sort','cards','resultCount','empty','savedCount','openStat'].map(id => [id, document.getElementById(id)]));
+    const prettyDate = iso => iso ? new Intl.DateTimeFormat('en-CA',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T12:00:00Z')) : 'Ongoing';
+    const esc = value => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const amountBand = amount => {
+      const values = [...String(amount).matchAll(/\$\s?([\d,]+)/g)].map(match => Number(match[1].replaceAll(',', '')));
+      if (!values.length) return null;
+      const maximum = Math.max(...values);
+      return maximum < 1000 ? 'under-1000' : maximum <= 5000 ? '1000-5000' : 'over-5000';
+    };
+    const amountBandLabel = band => band === 'under-1000' ? 'Under $1,000' : band === '1000-5000' ? '$1,000–$5,000' : band === 'over-5000' ? 'Over $5,000' : 'Not specified';
+
+    function fillSelect(select, values) {
+      [...new Set(values)].sort().forEach(v => select.insertAdjacentHTML('beforeend', `<option value="${esc(v)}">${esc(v)}</option>`));
+    }
+    fillSelect(els.discipline, grants.flatMap(g => g.disciplines));
+    fillSelect(els.fundingType, grants.map(g => g.type));
+    fillSelect(els.applicant, grants.flatMap(g => g.applicants));
+    fillSelect(els.region, grants.map(g => g.region));
+
+    function statusLabel(status) { return status === 'open' ? 'Open now' : status === 'upcoming' ? 'Opening soon' : status === 'ongoing' ? 'Ongoing' : 'Closed / next intake'; }
+    function getFiltered() {
+      const q = els.search.value.trim().toLowerCase();
+      return grants.filter(g => {
+        const haystack = [g.title,g.funder,g.description,g.fit,g.region,g.type,...g.disciplines,...g.applicants].join(' ').toLowerCase();
+        const statusMatch = els.status.value === 'all' || (els.status.value === 'active' ? g.status !== 'closed' : g.status === els.status.value);
+        return (!q || haystack.includes(q)) &&
+          (els.discipline.value === 'all' || g.disciplines.includes(els.discipline.value)) &&
+          (els.fundingType.value === 'all' || g.type === els.fundingType.value) &&
+          (els.applicant.value === 'all' || g.applicants.includes(els.applicant.value)) &&
+          (els.amountBand.value === 'all' || amountBand(g.amount) === els.amountBand.value) &&
+          (els.region.value === 'all' || g.region === els.region.value) &&
+          statusMatch && (!els.savedOnly.checked || state.saved.has(g.id));
+      }).sort((a,b) => {
+        if (els.sort.value === 'title') return a.title.localeCompare(b.title);
+        if (els.sort.value === 'funder') return a.funder.localeCompare(b.funder) || a.title.localeCompare(b.title);
+        return (a.deadline || '9999').localeCompare(b.deadline || '9999');
+      });
+    }
+
+    function render() {
+      const list = getFiltered();
+      els.resultCount.textContent = `${list.length} of ${grants.length} opportunities`;
+      els.cards.innerHTML = list.map(g => `
+        <article class="card ${g.status}">
+          <div class="card-top">
+            <div class="badge-row"><span class="badge status-${g.status}">${statusLabel(g.status)}</span><span class="badge">${esc(g.type)}</span><span class="badge">${esc(g.region)}</span></div>
+            <button class="icon-btn ${state.saved.has(g.id) ? 'saved' : ''}" data-save="${g.id}" aria-label="${state.saved.has(g.id) ? 'Remove from' : 'Add to'} saved grants" title="Save grant">${state.saved.has(g.id) ? '★' : '☆'}</button>
+          </div>
+          <h3>${esc(g.title)}</h3>
+          <p class="funder">${esc(g.funder)}</p>
+          <p class="desc">${esc(g.description)}</p>
+          <div class="meta"><div><small>Deadline</small><strong>${prettyDate(g.deadline)}</strong></div><div><small>Funding</small><strong>${esc(g.amount)}</strong></div></div>
+          <div class="card-actions"><a class="primary-btn" href="${g.url}" target="_blank" rel="noopener">Official program ↗</a><button class="details-btn" data-detail="${g.id}">Details</button></div>
+        </article>`).join('');
+      els.empty.style.display = list.length ? 'none' : 'block';
+      els.savedCount.textContent = state.saved.size;
+      els.openStat.textContent = grants.filter(g => g.status !== 'closed').length;
+    }
+
+    function save(id) {
+      state.saved.has(id) ? state.saved.delete(id) : state.saved.add(id);
+      localStorage.setItem('bcArtsSaved', JSON.stringify([...state.saved]));
+      render();
+    }
+    function showDetails(id) {
+      const g = grants.find(x => x.id === id);
+      document.getElementById('dialogContent').innerHTML = `
+        <div class="dialog-head"><div><p class="eyebrow" style="color:var(--forest)">${esc(g.funder)}</p><h2>${esc(g.title)}</h2></div><button class="close" data-close aria-label="Close">×</button></div>
+        <p>${esc(g.description)}</p>
+        <div class="detail-grid">
+          <div class="detail-box"><small>Status</small><br><strong>${statusLabel(g.status)}</strong></div>
+          <div class="detail-box"><small>Deadline</small><br><strong>${prettyDate(g.deadline)}</strong></div>
+          <div class="detail-box"><small>Applicant</small><br><strong>${esc(g.applicants.join(', '))}</strong></div>
+          <div class="detail-box"><small>Disciplines</small><br><strong>${esc(g.disciplines.join(', '))}</strong></div>
+          <div class="detail-box"><small>Grant amount category</small><br><strong>${amountBandLabel(amountBand(g.amount))}</strong></div>
+          <div class="detail-box"><small>Funding type</small><br><strong>${esc(g.type)}</strong></div>
+          <div class="detail-box"><small>Official source checked</small><br><strong>${prettyDate(g.verified)}</strong></div>
+        </div>
+        <p><strong>Potential fit:</strong> ${esc(g.fit)}</p>
+        <a class="primary-btn" style="display:block;margin-top:22px" href="${g.url}" target="_blank" rel="noopener">Review official guidelines ↗</a>`;
+      document.getElementById('detailsDialog').showModal();
+    }
+
+    document.addEventListener('click', e => {
+      const saveBtn = e.target.closest('[data-save]');
+      const detailBtn = e.target.closest('[data-detail]');
+      if (saveBtn) save(saveBtn.dataset.save);
+      if (detailBtn) showDetails(detailBtn.dataset.detail);
+      if (e.target.closest('[data-close]')) document.getElementById('detailsDialog').close();
+    });
+    ['search','discipline','fundingType','applicant','amountBand','region','status','savedOnly','sort'].forEach(id => els[id].addEventListener(id === 'search' ? 'input' : 'change', render));
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      els.search.value = ''; ['discipline','fundingType','applicant','amountBand','region'].forEach(id => els[id].value = 'all'); els.status.value = 'active'; els.savedOnly.checked = false; render();
+    });
+    document.getElementById('savedButton').addEventListener('click', () => { els.savedOnly.checked = !els.savedOnly.checked; render(); document.querySelector('.results').scrollIntoView({behavior:'smooth'}); });
+    document.getElementById('detailsDialog').addEventListener('click', e => { if (e.target.id === 'detailsDialog') e.target.close(); });
+    render();
+  </script>
+</body>
+</html>
