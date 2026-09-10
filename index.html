@@ -734,13 +734,16 @@
     };
     const amountBandLabel = band => band === 'under-1000' ? 'Under $1,000' : band === '1000-5000' ? '$1,000–$5,000' : band === 'over-5000' ? 'Over $5,000' : 'Not specified';
 
-    function fillSelect(select, values) {
-      [...new Set(values)].sort().forEach(v => select.insertAdjacentHTML('beforeend', `<option value="${esc(v)}">${esc(v)}</option>`));
+    function fillSelect(select, values, compareFn = (a, b) => a.localeCompare(b)) {
+      [...new Set(values)].sort(compareFn).forEach(v => select.insertAdjacentHTML('beforeend', `<option value="${esc(v)}">${esc(v)}</option>`));
     }
     fillSelect(els.discipline, grants.flatMap(g => g.disciplines));
     fillSelect(els.fundingType, grants.map(g => g.type));
     fillSelect(els.applicant, grants.flatMap(g => g.applicants));
-    fillSelect(els.region, grants.map(g => g.region));
+    const regionPriority = { Canada: 0, 'British Columbia': 1 };
+    fillSelect(els.region, grants.map(g => g.region), (a, b) =>
+      (regionPriority[a] ?? 2) - (regionPriority[b] ?? 2) || a.localeCompare(b)
+    );
 
     function statusLabel(status) { return status === 'open' ? 'Open now' : status === 'upcoming' ? 'Opening soon' : status === 'ongoing' ? 'Ongoing' : 'Closed / next intake'; }
     function getFiltered() {
