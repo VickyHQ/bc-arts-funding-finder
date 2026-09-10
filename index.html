@@ -268,7 +268,7 @@
         </div>
         <div class="cards" id="cards"></div>
         <div class="empty" id="empty"><strong>No matching opportunities.</strong><br>Try widening your filters or clearing the search.</div>
-        <p class="source-note"><strong>Before you apply:</strong> Program details can change. Always confirm the current deadline, eligibility and guidelines on the funder’s official website. Each listing links to an official source. Directory last reviewed September 9, 2026.</p>
+        <p class="source-note"><strong>Before you apply:</strong> Program details can change. Always confirm the current deadline, eligibility and guidelines on the funder’s official website. Each listing links to an official source. Directory last reviewed September 10, 2026.</p>
       </section>
     </div>
   </main>
@@ -387,6 +387,76 @@
     ];
 
     grants.push(
+      {
+        id: 'federal-bcah-local-festivals', title: 'Local Festivals', funder: 'Canadian Heritage — Building Communities Through Arts and Heritage',
+        disciplines: ['Festivals','Community Arts','Theatre','Music','Dance','Cultural Heritage','Indigenous Arts'], applicants: ['Organizations','Collectives','Indigenous Governments'], region: 'Canada', type: 'Arts-eligible community',
+        status: 'open', deadline: '2026-10-15', amount: 'Up to $200,000', verified: '2026-09-10',
+        description: 'Supports recurring local festivals whose programming primarily presents local arts, heritage and Indigenous cultural activities and actively involves the community.',
+        fit: 'B.C. local non-profits, unincorporated community groups and eligible Indigenous governments or organizations; individuals and for-profit businesses are not eligible.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/building-communities/festivals.html'
+      },
+      {
+        id: 'federal-capf-festivals-series', title: 'Professional Arts Festivals and Performing Arts Series Presenters', funder: 'Canadian Heritage — Canada Arts Presentation Fund',
+        disciplines: ['Festivals','Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Arts-specific',
+        status: 'open', deadline: '2026-10-15', amount: 'Varies', verified: '2026-09-10',
+        description: 'Supports established professional arts festivals and performing arts series presenters that connect artists with audiences through performances and public engagement.',
+        fit: 'Eligible B.C. incorporated non-profits, public institutions and Indigenous organizations presenting professional arts programming.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/arts-presentation-fund/programming-arts-festivals-series-presenters.html'
+      },
+      {
+        id: 'federal-capf-development', title: 'Development', funder: 'Canadian Heritage — Canada Arts Presentation Fund',
+        disciplines: ['Festivals','Theatre','Music','Dance','Visual Arts','Media Arts','Community Arts'], applicants: ['Organizations','Collectives','Indigenous Governments'], region: 'Canada', type: 'Arts-specific',
+        status: 'ongoing', deadline: null, amount: 'Varies', verified: '2026-09-10',
+        description: 'Supports emerging arts presenters and presenter-support organizations serving under-served communities or artistic practices.',
+        fit: 'Eligible B.C. non-profits, public institutions, Indigenous organizations, and qualifying unincorporated or ad hoc ethnocultural and Indigenous groups. Contact the regional office for the deadline.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/arts-presentation-fund/development.html'
+      },
+      {
+        id: 'federal-cultural-spaces', title: 'Canada Cultural Spaces Fund', funder: 'Canadian Heritage',
+        disciplines: ['Cultural Spaces','Theatre','Music','Dance','Visual Arts','Media Arts','Museums','Cultural Heritage'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Arts-specific',
+        status: 'ongoing', deadline: null, amount: 'Varies by project', verified: '2026-09-10',
+        description: 'Supports renovations and specialized equipment that improve physical conditions for arts, heritage, culture and creative innovation. Applications are accepted while funds remain available.',
+        fit: 'Incorporated B.C. non-profit arts or heritage organizations active for more than two years, eligible public bodies and Indigenous governing bodies; individuals and for-profit entities are not eligible.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/cultural-spaces-fund.html'
+      },
+      {
+        id: 'federal-map-indigenous-heritage', title: 'Indigenous Heritage', funder: 'Canadian Heritage — Museums Assistance Program',
+        disciplines: ['Indigenous Arts','Museums','Cultural Heritage'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Indigenous & cultural heritage',
+        status: 'open', deadline: '2026-11-02', amount: 'Varies', verified: '2026-09-10',
+        description: 'Funds projects that preserve, manage and present Indigenous cultural heritage and increase public awareness of First Nations, Inuit and Métis cultures.',
+        fit: 'Eligible B.C. Indigenous governing bodies and organizations, qualifying non-profit museums, and museum-sector service organizations.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/museums-assistance/indigenous-heritage.html'
+      },
+      {
+        id: 'federal-map-access-heritage', title: 'Access to Heritage', funder: 'Canadian Heritage — Museums Assistance Program',
+        disciplines: ['Museums','Cultural Heritage','Indigenous Arts','Visual Arts'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Indigenous & cultural heritage',
+        status: 'open', deadline: '2026-11-02', amount: 'Varies', verified: '2026-09-10',
+        description: 'Supports travelling exhibitions in Canada so heritage organizations can reach audiences in different geographic regions.',
+        fit: 'Eligible B.C. incorporated non-profit museums, museum-sector service organizations and Indigenous governing bodies or organizations.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/museums-assistance/access-heritage.html'
+      },
+      {
+        id: 'federal-map-collections-management', title: 'Collections Management', funder: 'Canadian Heritage — Museums Assistance Program',
+        disciplines: ['Museums','Cultural Heritage','Indigenous Arts'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Indigenous & cultural heritage',
+        status: 'open', deadline: '2026-11-02', amount: 'Varies', verified: '2026-09-10',
+        description: 'Supports projects that improve professional knowledge, skills and practices related to collections management and key museum functions.',
+        fit: 'Eligible B.C. incorporated non-profit museums, museum-sector service organizations and Indigenous governing bodies or organizations.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/museums-assistance/collections-management.html'
+      },
+      {
+        id: 'federal-map-exhibition-circulation', title: 'Exhibition Circulation Fund', funder: 'Canadian Heritage — Museums Assistance Program',
+        disciplines: ['Museums','Cultural Heritage','Indigenous Arts','Visual Arts'], applicants: ['Organizations','Indigenous Governments'], region: 'Canada', type: 'Indigenous & cultural heritage',
+        status: 'ongoing', deadline: null, amount: 'Varies', verified: '2026-09-10',
+        description: 'Helps museums host travelling exhibitions from eligible Canadian or federal institutions and borrow artefacts from federal institutions. Funding is currently limited.',
+        fit: 'Eligible B.C. incorporated non-profit museums and Indigenous governing bodies or organizations; applicants should speak with a regional advisor before applying.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/museums-assistance/exhibition-circulation.html'
+      },
+      {
+        id: 'federal-canada-book-organizations', title: 'Support for Organizations', funder: 'Canadian Heritage — Canada Book Fund',
+        disciplines: ['Literary','Publishing'], applicants: ['Organizations'], region: 'Canada', type: 'Arts-specific',
+        status: 'upcoming', deadline: '2026-10-31', amount: 'Varies', verified: '2026-09-10',
+        description: 'Supports marketing, professional development, internships and technology projects that promote Canadian-authored books and strengthen the book industry. The intake opens September 21, 2026.',
+        fit: 'Canadian-owned and controlled incorporated organizations or professional associations related to book publishing, including eligible B.C. applicants.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/book-fund/support-organizations.html'
+      },
+      {
+        id: 'federal-cultural-investment-endowment', title: 'Endowment Incentives', funder: 'Canadian Heritage — Canada Cultural Investment Fund',
+        disciplines: ['Theatre','Music','Dance','Visual Arts','Media Arts','Literary'], applicants: ['Organizations'], region: 'Canada', type: 'Arts-specific',
+        status: 'open', deadline: '2026-12-01', amount: 'Matching funds up to 1:1', verified: '2026-09-10',
+        description: 'Provides government matching funds for private donations raised toward endowment funds that support the long-term stability of professional arts organizations.',
+        fit: 'An eligible B.C. not-for-profit professional arts organization applying jointly with an associated public foundation.', url: 'https://www.canada.ca/en/canadian-heritage/services/funding/cultural-investment-fund/endowment-incentives.html'
+      },
       {
         id: 'bcac-creative-writers', title: 'Individual Arts Grants: Creative Writers', funder: 'BC Arts Council',
         disciplines: ['Literary'], applicants: ['Individuals'], region: 'British Columbia', type: 'Arts-specific',
@@ -649,7 +719,7 @@
     };
     grants.forEach(g => {
       g.type = g.type || typeById[g.id] || 'Arts-specific';
-      g.verified = '2026-09-09';
+      g.verified = g.verified || '2026-09-09';
     });
 
     const state = { saved: new Set(JSON.parse(localStorage.getItem('bcArtsSaved') || '[]')) };
