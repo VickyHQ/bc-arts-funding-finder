@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>BC Arts Grants Weekly Updates</title>
-    <link>https://bc-arts-funding-finder.h459208415.chatgpt.site/</link>
+    <link>https://vickyhq.github.io/bc-arts-funding-finder/</link>
     <description>New and approaching funding opportunities for artists, arts organizations, and eligible community arts projects in British Columbia.</description>
     <language>en-ca</language>
     <lastBuildDate>Wed, 09 Sep 2026 21:00:00 GMT</lastBuildDate>
-    <atom:link href="https://bc-arts-funding-finder.h459208415.chatgpt.site/grants.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://vickyhq.github.io/bc-arts-funding-finder/grants.xml" rel="self" type="application/rss+xml" />
     <item><title>Community Climate Action Grant — City of Vancouver</title><link>https://vancouver.ca/people-programs/community-climate-action-grants.aspx</link><guid isPermaLink="false">vancouver-climate-action-2026-09-09</guid><pubDate>Wed, 09 Sep 2026 21:00:00 GMT</pubDate><description><![CDATA[Deadline: October 1, 2026. Up to $50,000 for community-led climate action; aligned creative public engagement and arts-based approaches may be eligible.]]></description></item>
     <item><title>2027 Cultural Grants — City of Surrey</title><link>https://www.surrey.ca/arts-culture/cultural-grants</link><guid isPermaLink="false">surrey-cultural-2027-2026-09-09</guid><pubDate>Wed, 09 Sep 2026 21:00:00 GMT</pubDate><description><![CDATA[Deadline: October 5, 2026. Open support for Surrey arts, culture and heritage through celebration, project and operating categories.]]></description></item>
     <item><title>2027 Culture Project Grant — City of Nanaimo</title><link>https://www.nanaimo.ca/your-government/grants/culture-project-grant</link><guid isPermaLink="false">nanaimo-culture-project-2026-09-09</guid><pubDate>Wed, 09 Sep 2026 21:00:00 GMT</pubDate><description><![CDATA[Deadline: October 6, 2026. Supports culture and heritage projects contributing to Nanaimo’s cultural, social and economic vitality.]]></description></item>
