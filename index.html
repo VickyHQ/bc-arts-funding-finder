@@ -140,9 +140,8 @@
     .card-top { display: flex; justify-content: space-between; gap: 12px; }
     .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
     .badge { padding: 4px 8px; border-radius: 999px; font-size: .72rem; font-weight: 800; letter-spacing: .02em; background: var(--blue); }
-    .status-open { color: #14553d; background: #dff5e7; }
+    .status-open, .status-ongoing { color: #14553d; background: #dff5e7; }
     .status-upcoming { color: #174f75; background: #dceefb; }
-    .status-ongoing { color: #62500c; background: var(--amber); }
     .status-closed { color: #6b5555; background: #eee8e8; }
     .icon-btn { flex: 0 0 auto; width: 38px; height: 38px; color: #435048; background: #f1f4f1; font-size: 1.15rem; }
     .icon-btn.saved { color: white; background: var(--forest); }
@@ -200,7 +199,7 @@
         <h1>Find the next stage for your art.</h1>
         <p class="intro">A practical directory for arts grants, arts-eligible community funding, microgrants and regional opportunities. Search verified programs, compare eligibility and keep a shortlist on this device.</p>
       </div>
-      <div class="hero-stat"><strong id="openStat">0</strong><span>open or ongoing opportunities</span></div>
+      <div class="hero-stat"><strong id="openStat">0</strong><span>open opportunities</span></div>
     </div>
   </section>
 
@@ -240,12 +239,10 @@
         <div class="field">
           <label for="status">Status</label>
           <select id="status">
-            <option value="active">Open + ongoing</option>
             <option value="all">All statuses</option>
-            <option value="open">Open now</option>
+            <option value="open" selected>Open</option>
             <option value="upcoming">Opening soon</option>
-            <option value="ongoing">Ongoing</option>
-            <option value="closed">Closed / next intake</option>
+            <option value="closed">Closed</option>
           </select>
         </div>
         <div class="check-row"><input id="savedOnly" type="checkbox"><label for="savedOnly">Show saved only</label></div>
@@ -724,7 +721,7 @@
 
     const state = { saved: new Set(JSON.parse(localStorage.getItem('bcArtsSaved') || '[]')) };
     const els = Object.fromEntries(['search','discipline','fundingType','applicant','amountBand','region','status','savedOnly','sort','cards','resultCount','empty','savedCount','openStat'].map(id => [id, document.getElementById(id)]));
-    const prettyDate = iso => iso ? new Intl.DateTimeFormat('en-CA',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T12:00:00Z')) : 'Ongoing';
+    const prettyDate = iso => iso ? new Intl.DateTimeFormat('en-CA',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'}).format(new Date(iso+'T12:00:00Z')) : 'Ongoing / No fixed deadline';
     const esc = value => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
     const amountBand = amount => {
       const values = [...String(amount).matchAll(/\$\s?([\d,]+)/g)].map(match => Number(match[1].replaceAll(',', '')));
@@ -745,12 +742,12 @@
       (regionPriority[a] ?? 2) - (regionPriority[b] ?? 2) || a.localeCompare(b)
     );
 
-    function statusLabel(status) { return status === 'open' ? 'Open now' : status === 'upcoming' ? 'Opening soon' : status === 'ongoing' ? 'Ongoing' : 'Closed / next intake'; }
+    function statusLabel(status) { return status === 'open' || status === 'ongoing' ? 'Open' : status === 'upcoming' ? 'Opening soon' : 'Closed'; }
     function getFiltered() {
       const q = els.search.value.trim().toLowerCase();
       return grants.filter(g => {
         const haystack = [g.title,g.funder,g.description,g.fit,g.region,g.type,...g.disciplines,...g.applicants].join(' ').toLowerCase();
-        const statusMatch = els.status.value === 'all' || (els.status.value === 'active' ? g.status !== 'closed' : g.status === els.status.value);
+        const statusMatch = els.status.value === 'all' || (els.status.value === 'open' ? ['open','ongoing'].includes(g.status) : g.status === els.status.value);
         return (!q || haystack.includes(q)) &&
           (els.discipline.value === 'all' || g.disciplines.includes(els.discipline.value)) &&
           (els.fundingType.value === 'all' || g.type === els.fundingType.value) &&
@@ -782,7 +779,7 @@
         </article>`).join('');
       els.empty.style.display = list.length ? 'none' : 'block';
       els.savedCount.textContent = state.saved.size;
-      els.openStat.textContent = grants.filter(g => g.status !== 'closed').length;
+      els.openStat.textContent = grants.filter(g => ['open','ongoing'].includes(g.status)).length;
     }
 
     function save(id) {
@@ -818,7 +815,7 @@
     });
     ['search','discipline','fundingType','applicant','amountBand','region','status','savedOnly','sort'].forEach(id => els[id].addEventListener(id === 'search' ? 'input' : 'change', render));
     document.getElementById('clearFilters').addEventListener('click', () => {
-      els.search.value = ''; ['discipline','fundingType','applicant','amountBand','region'].forEach(id => els[id].value = 'all'); els.status.value = 'active'; els.savedOnly.checked = false; render();
+      els.search.value = ''; ['discipline','fundingType','applicant','amountBand','region'].forEach(id => els[id].value = 'all'); els.status.value = 'open'; els.savedOnly.checked = false; render();
     });
     document.getElementById('savedButton').addEventListener('click', () => { els.savedOnly.checked = !els.savedOnly.checked; render(); document.querySelector('.results').scrollIntoView({behavior:'smooth'}); });
     document.getElementById('detailsDialog').addEventListener('click', e => { if (e.target.id === 'detailsDialog') e.target.close(); });
