@@ -165,6 +165,31 @@
     .detail-box { padding: 13px; background: #f2f5f2; border-radius: 10px; }
     .detail-box small { color: var(--muted); }
     .source-note { margin: 26px 0 0; padding: 15px 17px; color: #4d5a54; background: #edf2ef; border-radius: 12px; font-size: .85rem; }
+    .feedback {
+      margin-top: 28px;
+      padding: clamp(22px, 3vw, 34px);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .feedback h2 { margin: 0 0 7px; font-family: Georgia, serif; font-size: 1.6rem; }
+    .feedback p { margin: 0 0 18px; color: var(--muted); }
+    .feedback form { display: grid; gap: 12px; max-width: 720px; }
+    .feedback textarea {
+      width: 100%;
+      min-height: 118px;
+      padding: 12px;
+      color: var(--ink);
+      background: white;
+      border: 1px solid #bdc8c1;
+      border-radius: 9px;
+      font: inherit;
+      resize: vertical;
+    }
+    .feedback textarea:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px rgba(22,76,59,.13); }
+    .feedback .primary-btn { justify-self: start; border: 0; cursor: pointer; }
+    .feedback small { display: block; margin-top: 12px; color: var(--muted); }
     .footer { padding: 30px 20px 44px; color: #627169; text-align: center; font-size: .83rem; }
     @media (max-width: 900px) {
       .hero-grid { grid-template-columns: 1fr; }
@@ -188,6 +213,7 @@
     <div class="brand"><span class="mark" aria-hidden="true">A</span><span>BC Arts Funding Finder</span></div>
     <div class="top-actions">
       <a class="subscribe-btn" href="https://128bda1b.sibforms.com/serve/MUIFAOodqYUkpgdd8EBw2gfmlDd9sn21eoK_OEhrHz0M6vfKUc3dgSCv6Qxck5OBrKpUi5GxR51sGOezSDINUQ0XwKmBGJxm0OzTxxF5S0GLsu5zzCNo-66IOmC3bCoLgjyaQ1hmm3c_h9a180X9ck6utJMZQclFyOyywsFlSOHn5063_NL6P8tYk0VfhZFsxVqpqbn2GkpHVGkqWQ==" target="_blank" rel="noopener">Weekly email alerts ↗</a>
+      <a class="ghost-btn" href="#feedback" style="text-decoration:none">Feedback</a>
       <button class="ghost-btn" id="savedButton">Saved <span id="savedCount">0</span></button>
     </div>
   </header>
@@ -268,6 +294,17 @@
         <p class="source-note"><strong>Before you apply:</strong> Program details can change. Always confirm the current deadline, eligibility and guidelines on the funder’s official website. Each listing links to an official source. Directory last reviewed September 21, 2026.</p>
       </section>
     </div>
+    <section class="feedback" id="feedback" aria-labelledby="feedbackTitle">
+      <h2 id="feedbackTitle">Share your feedback</h2>
+      <p>Know a grant we should add? Have a suggestion or found something that needs fixing? Tell us here.</p>
+      <form action="https://github.com/VickyHQ/bc-arts-funding-finder/issues/new" method="get" target="_blank">
+        <input type="hidden" name="title" value="Website feedback">
+        <label for="feedbackMessage">Your suggestion</label>
+        <textarea id="feedbackMessage" name="body" placeholder="Tell us which grant or page you mean, and what we can improve…" maxlength="1800" required></textarea>
+        <button class="primary-btn" type="submit">Continue to submit feedback ↗</button>
+      </form>
+      <small>You'll review and submit your message on GitHub. A free GitHub account is required, and submitted feedback will be public. Please leave out personal information.</small>
+    </section>
   </main>
 
   <footer class="footer">Independent planning directory · Official application links are provided for verification · <a href="./grants.xml">RSS feed</a></footer>
